@@ -31,7 +31,7 @@ export default function Index() {
     <div className="min-h-screen bg-background text-foreground">
       <div className="relative">
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/70" />
-        <div className="h-[380px] w-full bg-[url('/public/placeholder.svg')] bg-cover bg-center" aria-hidden />
+        <div className="h-[380px] w-full bg-[url('/placeholder.svg')] bg-cover bg-center" aria-hidden />
         <Navbar className="absolute top-0 left-0 right-0" />
         <div className="relative max-w-6xl mx-auto pt-28 pb-12 px-4 text-center text-white">
           <h1 className="text-4xl md:text-5xl font-extrabold">Explore Culinary Experiences</h1>
