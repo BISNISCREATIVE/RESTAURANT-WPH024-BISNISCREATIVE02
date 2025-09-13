@@ -4,7 +4,7 @@ import ProductCard from "@/components/ProductCard";
 import { useRestaurantsQuery, useRestaurantDetailQuery } from "@/services/queries/resto";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAppSelector } from "@/store";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 
 export default function Index() {
   const { q, category, sort } = useAppSelector((s) => s.filters);
@@ -14,6 +14,13 @@ export default function Index() {
 
   // pick first restaurant by default when loaded
   const firstId = useMemo(() => (restos && restos[0]?.id) ?? undefined, [restos]);
+
+  // when restaurants load, pick first as active if none selected
+  useEffect(() => {
+    if (firstId !== undefined && activeRestoId === undefined) {
+      setActiveRestoId(firstId);
+    }
+  }, [firstId, activeRestoId]);
 
   const items = useMemo(() => {
     const menus = (activeResto?.menus ?? []) as any[];
