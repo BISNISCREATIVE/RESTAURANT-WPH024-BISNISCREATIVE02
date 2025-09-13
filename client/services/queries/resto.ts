@@ -6,10 +6,15 @@ export function useRestaurantsQuery(params?: { q?: string }) {
   return useQuery({
     queryKey: ["restaurants", params],
     queryFn: async () => {
-      const { data } = await axios.get<RestaurantSummary[]>("/api/resto", {
+      const res = await axios.get("/api/resto", {
         params: { q: params?.q },
       });
-      return data;
+      const data = (res as any).data;
+      if (Array.isArray(data)) return data as RestaurantSummary[];
+      if (data && Array.isArray(data.data)) return data.data as RestaurantSummary[];
+      if (data && data.success && Array.isArray(data.data)) return data.data as RestaurantSummary[];
+      // fallback: return empty array
+      return [] as RestaurantSummary[];
     },
     staleTime: 60_000,
   });
