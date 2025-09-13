@@ -21,7 +21,6 @@ export function createServer() {
   app.get("/api/demo", handleDemo);
 
   // Proxy Foody API to avoid CORS in the browser
-  const { listResto, getResto } = await import("./routes/resto.js");
   app.get("/api/resto", listResto);
   app.get("/api/resto/:id", getResto);
 
