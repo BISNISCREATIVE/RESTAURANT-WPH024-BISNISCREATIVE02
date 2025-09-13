@@ -13,6 +13,7 @@ export default function Navbar({ className }: { className?: string }) {
   const q = useAppSelector((s) => s.filters.q);
   const itemsCount = useAppSelector((s) => s.cart.items.reduce((a, b) => a + b.qty, 0));
   const [open, setOpen] = useState(false);
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   return (
     <header className={cn("w-full z-20", className)}>
@@ -27,6 +28,11 @@ export default function Navbar({ className }: { className?: string }) {
             className="rounded-full bg-white/90"
           />
         </div>
+        {!token && (
+          <Button asChild variant="default" className="rounded-full">
+            <a href="/login">Masuk</a>
+          </Button>
+        )}
         <Button variant="secondary" className="relative rounded-full" onClick={() => setOpen(true)} aria-label="Open cart">
           <ShoppingBag className="size-5" />
           {itemsCount > 0 && (
