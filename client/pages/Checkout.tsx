@@ -19,14 +19,14 @@ export default function Checkout() {
   const dispatch = useAppDispatch();
   const nav = useNavigate();
 
-  function saveOrder(e: React.FormEvent<HTMLFormElement>) {
+  async function saveOrder(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
     const customerName = String(form.get("name") || "");
     const phone = String(form.get("phone") || "");
     const address = String(form.get("address") || "");
 
-    const order: Order = {
+    const order: any = {
       id: crypto.randomUUID(),
       items,
       total,
@@ -34,12 +34,22 @@ export default function Checkout() {
       phone,
       address,
       createdAt: dayjs().toISOString(),
+      status: "preparing",
     };
-    const prev = JSON.parse(localStorage.getItem("orders") || "[]");
-    prev.unshift(order);
-    localStorage.setItem("orders", JSON.stringify(prev));
-    dispatch(clearCart());
-    nav("/orders");
+
+    try {
+      const saved = await createOrder(order);
+      dispatch(clearCart());
+      nav(`/success?orderId=${encodeURIComponent(saved.id || order.id)}`);
+    } catch (err) {
+      console.error(err);
+      // fallback local
+      const prev = JSON.parse(localStorage.getItem("orders") || "[]");
+      prev.unshift(order);
+      localStorage.setItem("orders", JSON.stringify(prev));
+      dispatch(clearCart());
+      nav(`/success?orderId=${encodeURIComponent(order.id)}`);
+    }
   }
 
   return (
