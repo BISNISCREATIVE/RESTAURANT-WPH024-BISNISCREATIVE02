@@ -14,11 +14,32 @@ interface Restaurant {
   categories?: number[]; // category ids
 }
 
+type OrderItem = { id: string | number; name: string; qty: number; price: number };
+interface Order {
+  id: string;
+  items: OrderItem[];
+  total: number;
+  customerName: string;
+  phone: string;
+  address: string;
+  createdAt: string;
+  status: "preparing" | "on_the_way" | "delivered" | "done" | "canceled";
+}
+
+interface Review {
+  id: string;
+  orderId: string;
+  restaurantId?: number | string | null;
+  rating: number;
+  comment: string;
+  createdAt: string;
+}
+
 async function ensureDb() {
   try {
     await fs.access(DB_PATH);
   } catch {
-    const initial = {
+    const initial: { categories: Category[]; restaurants: Restaurant[]; orders: Order[]; reviews: Review[] } = {
       categories: [
         { id: 1, name: "Nearby", slug: "nearby" },
         { id: 2, name: "Discount", slug: "discount" },
@@ -37,7 +58,9 @@ async function ensureDb() {
           ],
           categories: [1, 3]
         }
-      ]
+      ],
+      orders: [],
+      reviews: []
     };
     await fs.mkdir(path.dirname(DB_PATH), { recursive: true });
     await fs.writeFile(DB_PATH, JSON.stringify(initial, null, 2), "utf-8");
@@ -47,10 +70,10 @@ async function ensureDb() {
 async function readDb() {
   await ensureDb();
   const raw = await fs.readFile(DB_PATH, "utf-8");
-  return JSON.parse(raw) as { categories: Category[]; restaurants: Restaurant[] };
+  return JSON.parse(raw) as { categories: Category[]; restaurants: Restaurant[]; orders: Order[]; reviews: Review[] };
 }
 
-async function writeDb(data: { categories: Category[]; restaurants: Restaurant[] }) {
+async function writeDb(data: { categories: Category[]; restaurants: Restaurant[]; orders: Order[]; reviews: Review[] }) {
   await fs.writeFile(DB_PATH, JSON.stringify(data, null, 2), "utf-8");
 }
 
@@ -117,4 +140,77 @@ export const deleteRestaurant: RequestHandler = async (req, res) => {
   db.restaurants = db.restaurants.filter((r) => r.id !== id);
   await writeDb(db);
   res.json({ success: true });
+};
+
+// Orders CRUD
+export const listOrders: RequestHandler = async (_req, res) => {
+  const db = await readDb();
+  res.json({ success: true, data: db.orders.sort((a,b)=> (a.createdAt>b.createdAt?-1:1)) });
+};
+
+export const createOrder: RequestHandler = async (req, res) => {
+  const db = await readDb();
+  const id = req.body?.id || crypto.randomUUID();
+  const order: Order = {
+    id,
+    items: req.body?.items || [],
+    total: Number(req.body?.total || 0),
+    customerName: String(req.body?.customerName || ""),
+    phone: String(req.body?.phone || ""),
+    address: String(req.body?.address || ""),
+    createdAt: req.body?.createdAt || new Date().toISOString(),
+    status: (req.body?.status as Order["status"]) || "preparing",
+  };
+  db.orders.unshift(order);
+  await writeDb(db);
+  res.status(201).json({ success: true, data: order });
+};
+
+export const getOrder: RequestHandler = async (req, res) => {
+  const db = await readDb();
+  const order = db.orders.find((o) => o.id === req.params.id);
+  if (!order) return res.status(404).json({ success: false, message: "Not found" });
+  res.json({ success: true, data: order });
+};
+
+export const updateOrder: RequestHandler = async (req, res) => {
+  const db = await readDb();
+  const idx = db.orders.findIndex((o) => o.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ success: false, message: "Not found" });
+  db.orders[idx] = { ...db.orders[idx], ...req.body };
+  await writeDb(db);
+  res.json({ success: true, data: db.orders[idx] });
+};
+
+export const deleteOrder: RequestHandler = async (req, res) => {
+  const db = await readDb();
+  db.orders = db.orders.filter((o) => o.id !== req.params.id);
+  await writeDb(db);
+  res.json({ success: true });
+};
+
+// Reviews
+export const createReview: RequestHandler = async (req, res) => {
+  const db = await readDb();
+  const review: Review = {
+    id: crypto.randomUUID(),
+    orderId: String(req.body?.orderId),
+    restaurantId: req.body?.restaurantId ?? null,
+    rating: Number(req.body?.rating || 0),
+    comment: String(req.body?.comment || ""),
+    createdAt: new Date().toISOString(),
+  };
+  db.reviews.push(review);
+  // mark order as done if provided
+  const idx = db.orders.findIndex((o) => o.id === review.orderId);
+  if (idx >= 0) db.orders[idx].status = "done";
+  await writeDb(db);
+  res.status(201).json({ success: true, data: review });
+};
+
+export const listReviews: RequestHandler = async (req, res) => {
+  const db = await readDb();
+  const { orderId } = req.query as { orderId?: string };
+  const list = orderId ? db.reviews.filter((r) => r.orderId === orderId) : db.reviews;
+  res.json({ success: true, data: list });
 };
