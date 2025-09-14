@@ -14,7 +14,13 @@ export default function ManageRestaurants({
   onClose: () => void;
 }) {
   const qc = useQueryClient();
-  const { data: restaurants = [], isLoading } = useRestaurantsQuery();
+  const { data: restaurants = [], isLoading } = useQuery({
+    queryKey: ["dummy-restaurants"],
+    queryFn: async () => {
+      const { data } = await localAxios.get("/dummy/restaurants");
+      return data?.data ?? data ?? [];
+    },
+  });
   const [editing, setEditing] = useState<any | null>(null);
   const [form, setForm] = useState({ name: "", city: "", rating: 0 });
 
