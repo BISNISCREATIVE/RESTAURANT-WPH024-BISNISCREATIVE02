@@ -1,6 +1,11 @@
 import { localAxios } from "./axios";
 
-export type OrderStatus = "preparing" | "on_the_way" | "delivered" | "done" | "canceled";
+export type OrderStatus =
+  | "preparing"
+  | "on_the_way"
+  | "delivered"
+  | "done"
+  | "canceled";
 
 export async function listOrders() {
   const { data } = await localAxios.get("/dummy/orders");
@@ -17,7 +22,10 @@ export async function createOrder(payload: any) {
   return data?.data ?? data;
 }
 
-export async function updateOrder(id: string, payload: Partial<{ status: OrderStatus }>) {
+export async function updateOrder(
+  id: string,
+  payload: Partial<{ status: OrderStatus }>,
+) {
   const { data } = await localAxios.put(`/dummy/orders/${id}`, payload);
   return data?.data ?? data;
 }

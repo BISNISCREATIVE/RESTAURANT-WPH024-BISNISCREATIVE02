@@ -5,7 +5,13 @@ import { formatCurrency } from "@/lib/format";
 import { useEffect, useMemo, useState } from "react";
 import { listOrders, updateOrder } from "@/services/api/orders";
 import { createReview } from "@/services/api/reviews";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
 export default function Orders() {
@@ -34,7 +40,11 @@ export default function Orders() {
     return orders
       .filter((o) => (status ? (o.status || "done") === status : true))
       .filter((o) =>
-        term ? o.items?.some((it: any) => String(it.name).toLowerCase().includes(term)) : true,
+        term
+          ? o.items?.some((it: any) =>
+              String(it.name).toLowerCase().includes(term),
+            )
+          : true,
       );
   }, [orders, q, status]);
 
@@ -42,7 +52,9 @@ export default function Orders() {
     if (!reviewOrder) return;
     await createReview({ orderId: reviewOrder.id, rating, comment });
     await updateOrder(reviewOrder.id, { status: "done" });
-    setOrders((prev) => prev.map((o) => (o.id === reviewOrder.id ? { ...o, status: "done" } : o)));
+    setOrders((prev) =>
+      prev.map((o) => (o.id === reviewOrder.id ? { ...o, status: "done" } : o)),
+    );
     setReviewOrder(null);
     setRating(4);
     setComment("");
@@ -77,7 +89,7 @@ export default function Orders() {
                 <button
                   key={s.key}
                   onClick={() => setStatus(s.key)}
-                  className={`rounded-full border px-4 h-10 ${status===s.key?"bg-red-50 border-red-600 text-red-600":""}`}
+                  className={`rounded-full border px-4 h-10 ${status === s.key ? "bg-red-50 border-red-600 text-red-600" : ""}`}
                 >
                   {s.label}
                 </button>
@@ -97,36 +109,74 @@ export default function Orders() {
                   <div className="font-semibold">{formatCurrency(o.total)}</div>
                 </div>
                 <div className="mt-3 flex items-center gap-3">
-                  <img src="/placeholder.svg" className="h-16 w-16 rounded-xl object-cover" />
+                  <img
+                    src="/placeholder.svg"
+                    className="h-16 w-16 rounded-xl object-cover"
+                  />
                   <div>
                     <div className="text-sm">Food Name</div>
-                    <div className="font-semibold">{o.items?.[0]?.qty ?? 0} × {formatCurrency(o.items?.[0]?.price ?? 0)}</div>
+                    <div className="font-semibold">
+                      {o.items?.[0]?.qty ?? 0} ×{" "}
+                      {formatCurrency(o.items?.[0]?.price ?? 0)}
+                    </div>
                   </div>
                 </div>
                 <div className="border-t my-3" />
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="text-sm text-muted-foreground">Total</div>
-                    <div className="text-xl font-extrabold">{formatCurrency(o.total)}</div>
+                    <div className="text-xl font-extrabold">
+                      {formatCurrency(o.total)}
+                    </div>
                   </div>
-                  <Dialog open={reviewOrder?.id === o.id} onOpenChange={(open)=> setReviewOrder(open? o : null)}>
+                  <Dialog
+                    open={reviewOrder?.id === o.id}
+                    onOpenChange={(open) => setReviewOrder(open ? o : null)}
+                  >
                     <DialogTrigger asChild>
-                      <Button className="rounded-full bg-red-600">Give Review</Button>
+                      <Button className="rounded-full bg-red-600">
+                        Give Review
+                      </Button>
                     </DialogTrigger>
                     <DialogContent>
                       <DialogHeader>
                         <DialogTitle>Give Review</DialogTitle>
                       </DialogHeader>
-                      <div className="text-center font-semibold">Give Rating</div>
+                      <div className="text-center font-semibold">
+                        Give Rating
+                      </div>
                       <div className="flex justify-center gap-1 mb-2">
-                        {[1,2,3,4,5].map((n)=> (
-                          <button key={n} onClick={()=> setRating(n)} aria-label={`rate ${n}`}>
-                            <svg width="28" height="28" viewBox="0 0 24 24" fill={n<=rating?"#F59E0B":"none"} stroke="#F59E0B" strokeWidth="2"><polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2"/></svg>
+                        {[1, 2, 3, 4, 5].map((n) => (
+                          <button
+                            key={n}
+                            onClick={() => setRating(n)}
+                            aria-label={`rate ${n}`}
+                          >
+                            <svg
+                              width="28"
+                              height="28"
+                              viewBox="0 0 24 24"
+                              fill={n <= rating ? "#F59E0B" : "none"}
+                              stroke="#F59E0B"
+                              strokeWidth="2"
+                            >
+                              <polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9 12 2" />
+                            </svg>
                           </button>
                         ))}
                       </div>
-                      <textarea value={comment} onChange={(e)=> setComment(e.target.value)} placeholder="Please share your thoughts about our service!" className="w-full h-40 border rounded-xl p-3" />
-                      <Button onClick={submitReview} className="w-full rounded-full bg-red-600">Send</Button>
+                      <textarea
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        placeholder="Please share your thoughts about our service!"
+                        className="w-full h-40 border rounded-xl p-3"
+                      />
+                      <Button
+                        onClick={submitReview}
+                        className="w-full rounded-full bg-red-600"
+                      >
+                        Send
+                      </Button>
                     </DialogContent>
                   </Dialog>
                 </div>
