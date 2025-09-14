@@ -3,12 +3,16 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 export type FiltersState = {
   q: string;
   category: string | null;
-  sort: "rating" | "price_asc" | "price_desc" | "name" | null;
+  sort: string | null;
 };
 
-const initialState: FiltersState = { q: "", category: null, sort: null };
+const initialState: FiltersState = {
+  q: "",
+  category: null,
+  sort: null,
+};
 
-const filtersSlice = createSlice({
+const slice = createSlice({
   name: "filters",
   initialState,
   reducers: {
@@ -18,16 +22,12 @@ const filtersSlice = createSlice({
     setCategory: (state, action: PayloadAction<string | null>) => {
       state.category = action.payload;
     },
-    setSort: (
-      state,
-      action: PayloadAction<FiltersState["sort"]>
-    ) => {
+    setSort: (state, action: PayloadAction<string | null>) => {
       state.sort = action.payload;
     },
     resetFilters: () => initialState,
   },
 });
 
-export const { setQuery, setCategory, setSort, resetFilters } =
-  filtersSlice.actions;
-export default filtersSlice.reducer;
+export const { setQuery, setCategory, setSort, resetFilters } = slice.actions;
+export default slice.reducer;

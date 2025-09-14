@@ -10,6 +10,10 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Checkout from "./pages/Checkout";
 import Orders from "./pages/Orders";
+import Auth from "./pages/Auth";
+import RestaurantDetail from "./pages/RestaurantDetail";
+import Profile from "./pages/Profile";
+import Register from "./pages/Register";
 import Login from "./pages/Login";
 import { Provider } from "react-redux";
 import { store } from "@/store";
@@ -27,7 +31,11 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/orders" element={<Orders />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/resto/:id" element={<RestaurantDetail />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

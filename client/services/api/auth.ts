@@ -1,14 +1,16 @@
-import axios from "@/services/api/axios";
+import axios from "./axios";
 
-export type LoginPayload = { email: string; password: string };
-export type LoginResponse = { token?: string; accessToken?: string; data?: { token?: string } } & Record<string, any>;
-
-export async function loginApi(payload: LoginPayload) {
-  const { data } = await axios.post<LoginResponse>(`/auth/login`, payload);
+// Use direct auth endpoints relative to API base URL
+export async function login(email: string, password: string) {
+  const { data } = await axios.post(`/auth/login`, { email, password });
   return data;
 }
 
-export async function getProfileApi() {
-  const { data } = await axios.get(`/auth/profile`);
+export async function register(name: string, email: string, password: string) {
+  const { data } = await axios.post(`/auth/register`, {
+    name,
+    email,
+    password,
+  });
   return data;
 }
