@@ -15,6 +15,7 @@ import RestaurantDetail from "./pages/RestaurantDetail";
 import Profile from "./pages/Profile";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+import Category from "./pages/Category";
 import { Provider } from "react-redux";
 import { store } from "@/store";
 
