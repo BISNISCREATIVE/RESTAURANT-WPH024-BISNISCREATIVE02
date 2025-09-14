@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState } from "react";
-import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { useRestaurantsQuery } from "@/services/queries/resto";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { localAxios } from "@/services/api/axios";
 import {
   createRestaurant,
   updateRestaurant,
