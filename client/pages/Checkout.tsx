@@ -11,6 +11,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
 import { Button as UIButton } from "@/components/ui/button";
+import { createOrder } from "@/services/api/orders";
 
 export default function Checkout() {
   const items = useAppSelector((s) => s.cart.items);
