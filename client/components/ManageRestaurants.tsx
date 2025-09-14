@@ -26,15 +26,15 @@ export default function ManageRestaurants({
 
   const createMut = useMutation({
     mutationFn: (payload: any) => createRestaurant(payload),
-    onSuccess: () => qc.invalidateQueries(["restaurants"]),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["dummy-restaurants"] }),
   });
   const updateMut = useMutation({
     mutationFn: ({ id, payload }: any) => updateRestaurant(id, payload),
-    onSuccess: () => qc.invalidateQueries(["restaurants"]),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["dummy-restaurants"] }),
   });
   const deleteMut = useMutation({
     mutationFn: (id: any) => deleteRestaurant(id),
-    onSuccess: () => qc.invalidateQueries(["restaurants"]),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["dummy-restaurants"] }),
   });
 
   React.useEffect(() => {
