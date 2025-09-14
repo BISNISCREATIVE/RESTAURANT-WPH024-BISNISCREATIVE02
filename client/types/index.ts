@@ -1,30 +1,28 @@
-export type Coordinates = { lat: number; long: number };
-
-export type RestaurantSummary = {
-  id: number | string;
+export type Category = {
+  id: string | number;
   name: string;
-  category?: string;
-  place?: string;
-  star?: number;
-  averageRating?: number;
-  logo?: string;
 };
 
 export type MenuItem = {
-  id: number | string;
-  foodName: string;
+  id: string | number;
+  name: string;
   price: number;
-  type?: string;
   image?: string;
-  restaurantId?: number | string;
+  rating?: number | null;
+  category?: string;
+  restaurantId?: string | number;
 };
 
-export type RestaurantDetail = RestaurantSummary & {
-  coordinates?: Coordinates;
+export type Restaurant = {
+  id: string | number;
+  name: string;
+  city?: string | null;
+  distance?: number | null;
+  rating?: number | null;
   images?: string[];
-  totalMenus?: number;
-  totalReviews?: number;
-  menus?: MenuItem[];
+  logo?: string | null;
+  menuCount?: number;
+  priceRange?: { min: number; max: number } | null;
 };
 
 export type CartItem = {
@@ -32,7 +30,7 @@ export type CartItem = {
   name: string;
   price: number;
   qty: number;
-  imageUrl?: string;
+  image?: string;
   restaurantId?: string | number;
 };
 
@@ -43,5 +41,5 @@ export type Order = {
   customerName: string;
   phone: string;
   address: string;
-  createdAt: string; // ISO
+  createdAt: string; // ISO string
 };

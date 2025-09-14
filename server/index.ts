@@ -2,8 +2,6 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
-import { listResto, getResto } from "./routes/resto";
-import { login, registerUser, getProfile, updateProfile } from "./routes/auth";
 
 export function createServer() {
   const app = express();
@@ -20,16 +18,6 @@ export function createServer() {
   });
 
   app.get("/api/demo", handleDemo);
-
-  // Proxy Foody API to avoid CORS in the browser
-  app.get("/api/resto", listResto);
-  app.get("/api/resto/:id", getResto);
-
-  // Auth proxies
-  app.post("/api/auth/login", login);
-  app.post("/api/auth/register", registerUser);
-  app.get("/api/auth/profile", getProfile);
-  app.put("/api/auth/profile", updateProfile);
 
   return app;
 }
