@@ -13,6 +13,13 @@ import {
   createRestaurant as createDummyRestaurant,
   updateRestaurant as updateDummyRestaurant,
   deleteRestaurant as deleteDummyRestaurant,
+  listOrders,
+  createOrder,
+  getOrder,
+  updateOrder,
+  deleteOrder,
+  createReview,
+  listReviews,
 } from "./routes/dummy";
 
 export function createServer() {
@@ -50,6 +57,16 @@ export function createServer() {
   app.post("/api/dummy/restaurants", createDummyRestaurant);
   app.put("/api/dummy/restaurants/:id", updateDummyRestaurant);
   app.delete("/api/dummy/restaurants/:id", deleteDummyRestaurant);
+
+  // Orders & Reviews
+  app.get("/api/dummy/orders", listOrders);
+  app.post("/api/dummy/orders", createOrder);
+  app.get("/api/dummy/orders/:id", getOrder);
+  app.put("/api/dummy/orders/:id", updateOrder);
+  app.delete("/api/dummy/orders/:id", deleteOrder);
+
+  app.get("/api/dummy/reviews", listReviews);
+  app.post("/api/dummy/reviews", createReview);
 
   return app;
 }
